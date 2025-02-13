@@ -3,12 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "start": "node index.js",
+    "test": "jest",
+    "build": "echo 'No build step needed'"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
     "express": "^4.21.2"
   },
