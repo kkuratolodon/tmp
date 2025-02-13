@@ -5,13 +5,15 @@
   "scripts": {
     "start": "node index.js",
     "test": "jest",
-    "build": "echo 'No build step needed'"
+    "build": "echo 'No build step needed'",
+    "lint": "eslint ."
   },
   "dependencies": {
     "express": "^4.21.2"
   },
   "devDependencies": {
     "jest": "^29.7.0",
-    "supertest": "^7.0.0"
+    "supertest": "^7.0.0",
+    "eslint": "^8.50.0"
   }
 }
