@@ -19,9 +19,11 @@ jobs:
           cache: "npm"
 
       - name: Install Dependencies
+        working-directory: backend
         run: npm install
 
       - name: Build Application
+        working-directory: backend
         run: npm run build
         env:
           NODE_ENV: ${{ secrets.NODE_ENV }}
@@ -30,7 +32,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: dist/
+          path: backend/dist/
 
   test:
     name: Run Tests
@@ -47,12 +49,15 @@ jobs:
           cache: "npm"
 
       - name: Install Dependencies
+        working-directory: backend
         run: npm install
 
       - name: Run Linter
+        working-directory: backend
         run: npm run lint
 
       - name: Run Tests
+        working-directory: backend
         run: npm test
         env:
           NODE_ENV: ${{ secrets.NODE_ENV }}
@@ -78,7 +83,7 @@ jobs:
           docker build --build-arg NODE_ENV='${{ secrets.NODE_ENV }}' \
           --build-arg DATABASE_URL='${{ secrets.DATABASE_URL }}' \
           --build-arg API_KEY='${{ secrets.API_KEY }}' \
-          -t ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }} .
+          -t ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }} backend
 
       - name: Push Docker Image
         run: |
@@ -108,5 +113,3 @@ jobs:
             sudo docker image rm -f ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }} || true &&
             sudo docker pull ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }} &&
             sudo docker run --name ${{ secrets.CONTAINER_NAME }} -d -p 8080:3000 ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }}"
-
-            
