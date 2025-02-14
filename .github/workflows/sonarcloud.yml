@@ -19,9 +19,11 @@ jobs:
           node-version: '20'  # Sesuaikan versi Node.js sesuai kebutuhan proyek Anda
 
       - name: Install dependencies
+        working-directory: backend
         run: npm install
 
       - name: Run build script
+        working-directory: backend
         run: npm run build  # Hapus atau ubah langkah ini jika tidak ada script build
 
       - name: Cache SonarCloud packages
@@ -35,11 +37,11 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('backend/package-lock.json') }}
           restore-keys: ${{ runner.os }}-node
 
       - name: Run SonarCloud analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx sonar-scanner
+        working-directory: ./backend        
