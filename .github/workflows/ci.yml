@@ -64,34 +64,6 @@ jobs:
         env:
           NODE_ENV: ${{ secrets.NODE_ENV }}
 
-
-  publish:
-    name: Publish Docker Image
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Docker Login
-        env:
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: echo "$DOCKER_PASSWORD" | docker login -u ${{ secrets.REGISTRY_USER }} --password-stdin docker.io
-
-      - name: Set Docker BuildKit
-        run: export DOCKER_BUILDKIT=1
-
-      - name: Build Docker Image
-        run: |
-          docker build --build-arg NODE_ENV='${{ secrets.NODE_ENV }}' \
-          --build-arg DATABASE_URL='${{ secrets.DATABASE_URL }}' \
-          --build-arg API_KEY='${{ secrets.API_KEY }}' \
-          -t ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }} backend
-
-      - name: Push Docker Image
-        run: |
-          docker push ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }}
-
   deploy:
     name: Deploy to Server
     runs-on: ubuntu-latest
