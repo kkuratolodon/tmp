@@ -85,6 +85,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -i ssh-key.pem ${{ secrets.USERNAME }}@${{ secrets.SERVER_IP }} "
             cd ~/fin-invoice-ocr-team6/backend &&
+            git reset --hard HEAD &&
             git pull origin main &&
             npm install --production &&
             pm2 restart invoice-ocr-backend || pm2 start server.js --name invoice-ocr-backend &&
