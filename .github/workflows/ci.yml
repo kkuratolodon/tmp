@@ -95,7 +95,7 @@ jobs:
   deploy:
     name: Deploy to Server
     runs-on: ubuntu-latest
-    needs: publish
+    needs: test
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -112,7 +112,9 @@ jobs:
       - name: Deploy to Server
         run: |
           ssh -o StrictHostKeyChecking=no -i ssh-key.pem ${{ secrets.USERNAME }}@${{ secrets.SERVER_IP }} "
-            sudo docker container rm -f ${{ secrets.CONTAINER_NAME }} || true &&
-            sudo docker image rm -f ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }} || true &&
-            sudo docker pull ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }} &&
-            sudo docker run --name ${{ secrets.CONTAINER_NAME }} -d -p 8080:3000 ${{ secrets.REGISTRY_USER }}/${{ secrets.IMAGE_NAME }}:${{ secrets.IMAGE_TAG }}"
+            cd ~/fin-invoice-ocr-team6/backend &&
+            git pull origin main &&
+            npm install --production &&
+            pm2 restart invoice-ocr-backend || pm2 start server.js --name invoice-ocr-backend &&
+            pm2 save
+          "
