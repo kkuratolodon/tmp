@@ -1,12 +1,32 @@
-name: Manual Trigger CI/CD Workflow
+name: Manual Deployment Workflow
 
 on:
   workflow_dispatch:  # Manual trigger for the workflow
+    inputs:
+      task:
+        description: 'Choose the task to run'
+        required: true
+        default: 'migrate'
+        type: choice
+        options:
+          - migrate
+          - rollback_migrate
+          - seed
+          - rollback_seed
+      environment:
+        description: 'Choose the environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
 
 jobs:
-  rollback:
+  rollback_migrate:
     name: Rollback Migration in Staging
     runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.task == 'rollback_migrate' }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -24,12 +44,13 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -i ssh-key.pem ${{ secrets.USERNAME }}@${{ secrets.SERVER_IP }} "
             cd ~/fin-invoice-ocr-team6/backend &&
-            npx sequelize-cli db:migrate:undo --env staging
+            npx sequelize-cli db:migrate:undo --env ${{ github.event.inputs.environment }}
           "
 
   migrate:
     name: Run Migrations in Staging
     runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.task == 'migrate' }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -47,12 +68,37 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -i ssh-key.pem ${{ secrets.USERNAME }}@${{ secrets.SERVER_IP }} "
             cd ~/fin-invoice-ocr-team6/backend &&
-            npx sequelize-cli db:migrate --env staging
+            npx sequelize-cli db:migrate --env ${{ github.event.inputs.environment }}
+          "
+
+  rollback_seed:
+    name: Rollback Seeders in Staging
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.task == 'rollback_seed' }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up SSH
+        run: sudo apt-get install openssh-client
+
+      - name: Create SSH Key
+        run: echo "${{ secrets.SSH_KEY }}" > ssh-key.pem
+
+      - name: Update SSH Key Permissions
+        run: chmod 400 ssh-key.pem
+
+      - name: Rollback Seeders in Staging
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ssh-key.pem ${{ secrets.USERNAME }}@${{ secrets.SERVER_IP }} "
+            cd ~/fin-invoice-ocr-team6/backend &&
+            npx sequelize-cli db:seed:undo:all --env ${{ github.event.inputs.environment }}
           "
 
   seed:
     name: Seed Data in Staging
     runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.task == 'seed' }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -70,5 +116,5 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -i ssh-key.pem ${{ secrets.USERNAME }}@${{ secrets.SERVER_IP }} "
             cd ~/fin-invoice-ocr-team6/backend &&
-            npx sequelize-cli db:seed:all --env staging
+            npx sequelize-cli db:seed:all --env ${{ github.event.inputs.environment }}
           "
