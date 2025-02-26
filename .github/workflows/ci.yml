@@ -104,7 +104,6 @@ jobs:
             git reset --hard HEAD &&
             git pull origin staging &&
             npm install &&
-            npm install --production &&
             # Run Migration for Staging
             npx sequelize-cli db:migrate --env staging &&
             # Run Seeder for Staging
