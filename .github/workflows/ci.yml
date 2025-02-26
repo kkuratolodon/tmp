@@ -87,12 +87,12 @@ jobs:
 
       - name: Set up Staging Environment Variables
         run: |
-          echo "DB_USER=${{ secrets.DB_USER }}" >> .env.staging
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env.staging
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env.staging
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env.staging
-          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env.staging
-          echo "NODE_ENV=staging" >> .env.staging
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+          echo "NODE_ENV=staging" >> .env
 
       - name: Deploy to Staging
         run: |
