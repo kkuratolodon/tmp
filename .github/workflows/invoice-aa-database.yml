@@ -1,4 +1,4 @@
-name: Invoice Database
+name: Invoice b Database
 
 on:
   workflow_dispatch:
@@ -115,7 +115,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -o ConnectTimeout=30 -i ssh-key.pem ${{ secrets.USERNAME }}@${{ secrets.SERVER_IP }} "
             cd ~/fin-invoice-ocr-team6/backend &&
-            npx sequelize-cli db:seed:undo:all --env ${{ github.event.inputs.environment }}
+            npx sequelize-cli db:seed:undo --seed 20250226143621-seed-invoice.js --env ${{ github.event.inputs.environment }}
           "
 
   seed:
@@ -140,5 +140,5 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -o ConnectTimeout=30 -i ssh-key.pem ${{ secrets.USERNAME }}@${{ secrets.SERVER_IP }} "
             cd ~/fin-invoice-ocr-team6/backend &&
-            npx sequelize-cli db:seed:all --env ${{ github.event.inputs.environment }}
+            npx sequelize-cli db:seed --seed 20250226143621-seed-invoice.js --env ${{ github.event.inputs.environment }}
           "
