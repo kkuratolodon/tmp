@@ -1,7 +1,7 @@
 name: Manual Deployment Workflow
 
 on:
-  workflow_dispatch:  # Manual trigger for the workflow
+  workflow_dispatch:
     inputs:
       task:
         description: 'Choose the task to run'
@@ -17,16 +17,41 @@ on:
         description: 'Choose the environment'
         required: true
         default: 'staging'
-        type: choice
-        options:
-          - staging
-          - production
 
 jobs:
+  setup:
+    name: Setup Staging Environment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install SSH client
+        run: sudo apt-get install openssh-client
+
+      - name: Create SSH Key
+        run: echo "${{ secrets.SSH_KEY }}" > ssh-key.pem
+
+      - name: Update SSH Key Permissions
+        run: chmod 400 ssh-key.pem
+
+      - name: Set up Staging Environment Variables
+        run: |
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+          echo "NODE_ENV=staging" >> .env
+          
+          echo "cat .env"
+          cat .env
+
   rollback_migrate:
     name: Rollback Migration in Staging
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.task == 'rollback_migrate' }}
+    needs: setup
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -51,6 +76,7 @@ jobs:
     name: Run Migrations in Staging
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.task == 'migrate' }}
+    needs: setup
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -75,6 +101,7 @@ jobs:
     name: Rollback Seeders in Staging
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.task == 'rollback_seed' }}
+    needs: setup
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -99,6 +126,7 @@ jobs:
     name: Seed Data in Staging
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.task == 'seed' }}
+    needs: setup
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
