@@ -67,7 +67,7 @@ jobs:
 
       - name: Rollback Migration in Staging
         run: |
-          ssh -o StrictHostKeyChecking=no -i ssh-key.pem ${{ secrets.USERNAME }}@${{ secrets.SERVER_IP }} "
+          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=30 -i ssh-key.pem ${{ secrets.USERNAME }}@${{ secrets.SERVER_IP }} "
             cd ~/fin-invoice-ocr-team6/backend &&
             npx sequelize-cli db:migrate:undo --env ${{ github.event.inputs.environment }}
           "
@@ -92,7 +92,7 @@ jobs:
 
       - name: Run Migrations in Staging
         run: |
-          ssh -o StrictHostKeyChecking=no -i ssh-key.pem ${{ secrets.USERNAME }}@${{ secrets.SERVER_IP }} "
+          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=30 -i ssh-key.pem ${{ secrets.USERNAME }}@${{ secrets.SERVER_IP }} "
             cd ~/fin-invoice-ocr-team6/backend &&
             npx sequelize-cli db:migrate --env ${{ github.event.inputs.environment }}
           "
@@ -117,7 +117,7 @@ jobs:
 
       - name: Rollback Seeders in Staging
         run: |
-          ssh -o StrictHostKeyChecking=no -i ssh-key.pem ${{ secrets.USERNAME }}@${{ secrets.SERVER_IP }} "
+          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=30 -i ssh-key.pem ${{ secrets.USERNAME }}@${{ secrets.SERVER_IP }} "
             cd ~/fin-invoice-ocr-team6/backend &&
             npx sequelize-cli db:seed:undo:all --env ${{ github.event.inputs.environment }}
           "
@@ -142,7 +142,7 @@ jobs:
 
       - name: Rerun Seeder in Staging
         run: |
-          ssh -o StrictHostKeyChecking=no -i ssh-key.pem ${{ secrets.USERNAME }}@${{ secrets.SERVER_IP }} "
+          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=30 -i ssh-key.pem ${{ secrets.USERNAME }}@${{ secrets.SERVER_IP }} "
             cd ~/fin-invoice-ocr-team6/backend &&
             npx sequelize-cli db:seed:all --env ${{ github.event.inputs.environment }}
           "
