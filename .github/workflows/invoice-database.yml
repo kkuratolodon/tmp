@@ -1,4 +1,4 @@
-name: Invoice Database
+name: Invoice a Database
 
 on:
   workflow_dispatch:
