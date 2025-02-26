@@ -94,6 +94,9 @@ jobs:
           echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
           echo "NODE_ENV=staging" >> .env
 
+          echo "cat .env"
+          cat .env
+
       - name: Deploy to Staging
         run: |
           ssh -o StrictHostKeyChecking=no -i ssh-key.pem ${{ secrets.USERNAME }}@${{ secrets.SERVER_IP }} "
