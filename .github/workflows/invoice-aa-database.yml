@@ -11,6 +11,7 @@ on:
         options:
           - migrate
           - rollback_migrate
+          - tes
 
 jobs:
   setup:
@@ -91,7 +92,7 @@ jobs:
             npx sequelize-cli db:migrate --env staging
           "
 
-  rollback_seed:
+  tes:
     name: Rollback Seeders in Staging
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.task == 'rollback_seed' }}
