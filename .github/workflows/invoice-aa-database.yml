@@ -11,8 +11,6 @@ on:
         options:
           - migrate
           - rollback_migrate
-          - seed
-          - rollback_seed
 
 jobs:
   setup:
